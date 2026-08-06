@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud Monitor</title>
+   <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; padding: 20px; }
+    h1 { color: #1a1a1a; font-weight: 600; }
+    .controls { margin-bottom: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    input { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 200px; margin-right: 10px; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ccc; transition: transform 0.2s; }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .UP { color: #155724; font-weight: bold; background: #d4edda; padding: 2px 8px; border-radius: 12px; display: inline-block; }
+    .DOWN { color: #721c24; font-weight: bold; background: #f8d7da; padding: 2px 8px; border-radius: 12px; display: inline-block; }
+    .card button { margin-top: 10px; width: 100%; background: #6c757d; }
+    .card button:hover { background: #5a6268; }
+</style>
+</head>
+<body>
+    <h1>Cloud Monitoring Dashboard</h1>
+    <input type="text" id="newService" placeholder="Service Name">
+    <button onclick="addService()">Add Service</button>
+    <div class="grid" id="serviceGrid"></div>
+
+    <script>
+        async function load() {
+            const res = await fetch('http://localhost:8080/api/services');
+            const services = await res.json();
+            const grid = document.getElementById('serviceGrid');
+            grid.innerHTML = '';
+            services.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h3>${s.serviceName}</h3><p class="${s.status}">${s.status}</p>
+                                  <button onclick="toggle(${s.id})">Toggle</button>`;
+                grid.appendChild(card);
+            });
+        }
+        async function addService() {
+            const name = document.getElementById('newService').value;
+            if(!name) return;
+            await fetch('http://localhost:8080/api/services', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({serviceName:name, status:'UP'})
+            });
+            load();
+        }
+        async function toggle(id) {
+            await fetch(`http://localhost:8080/api/services/${id}/toggle`, {method:'PUT'});
+            load();
+        }
+        load();
+    </script>
+</body>
+</html>
+
