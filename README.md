@@ -1,17 +1,35 @@
-# ☁️ Cloud Service Monitoring Dashboard
+# Cloud Service Monitoring Dashboard — Backend
 
-A full-stack web application designed to monitor the real-time health status of microservices.
+Spring Boot 3 backend for a full-stack cloud service monitoring dashboard. Tracks real-time UP/DOWN health status across 8 microservices with per-service failure isolation.
 
-## 🚀 Features
-- Real-Time Health Monitoring with UP/DOWN visual status.
-- Add new services and toggle status.
-- Persistent data storage using an H2 database.
+> **React frontend:** [cloud-monitor-react](https://github.com/shreyatavarkhed/cloud-monitor-react)
 
-## 🛠️ Tech Stack
-- Backend: Java, Spring Boot 3, Spring Data JPA, H2 Database, Maven.
-- Frontend: HTML5, CSS3, Vanilla JavaScript.
+---
 
-## 📦 Running Locally
-1. Open a terminal in the project folder.
-2. Run: `mvnw.cmd spring-boot:run`
-3. Open browser to: `http://localhost:8080/dashboard.html`
+## Features
+
+- Real-time health monitoring with UP/DOWN status per microservice
+- Per-service error isolation — one failing service does not break the dashboard
+- REST API for adding, toggling, and deleting monitored services
+- Persistent storage via Spring Data JPA + H2 (state survives restarts)
+- Validated add-service endpoint
+
+## Tech Stack
+
+- **Backend:** Java 17, Spring Boot 3, Spring Data JPA, H2, Maven
+- **API:** RESTful endpoints returning JSON
+- **Testing:** JUnit (backend), Vitest + React Testing Library (frontend)
+
+## Architecture
+
+This repo contains the backend only. The dashboard UI is built separately as a React 18 SPA:
+
+| Layer | Repo | Stack |
+|---|---|---|
+| Backend (this repo) | [cloud-monitor-dashboard](https://github.com/shreyatavarkhed/cloud-monitor-dashboard) | Spring Boot 3, JPA, H2 |
+| Frontend | [cloud-monitor-react](https://github.com/shreyatavarkhed/cloud-monitor-react) | React 18, custom `useServices` hook, 4 components, 6 unit tests |
+
+## Running Locally
+
+```bash
+./mvnw spring-boot:run
